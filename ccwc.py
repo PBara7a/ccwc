@@ -38,13 +38,13 @@ def read_from_file(filename: str) -> str:
 def main():
     parser = argparse.ArgumentParser(prog='wc', description='A clone of the Linux tool wc')
     parser.add_argument('filename', nargs='?', type=str, help='File to process')
-    parser.add_argument('-c', '--count', action='store_true', help='Count the bytes in the file')
-    parser.add_argument('-l', '--lines', action='store_true', help='Count the lines in the file')
-    parser.add_argument('-w', '--words', action='store_true', help='Count the words in the file')
-    parser.add_argument('-m', '--multibyte', action='store_true', help='Count the multibyte characters in the file')
+    parser.add_argument('-c', '--count', action='store_true', help='The number of bytes in each input file is written to the standard output.')
+    parser.add_argument('-l', '--lines', action='store_true', help='The number of lines in each input file is written to the standard output.')
+    parser.add_argument('-w', '--words', action='store_true', help='The number of words in each input file is written to the standard output.')
+    parser.add_argument('-m', '--multibyte', action='store_true', help='The number of characters in each input file is written to the standard output.  If the current locale does not support multibyte characters, this is equivalent to the -c option.')
     args = parser.parse_args()
 
-    filename, byte_count, line_count, word_count = '', '', '', ''
+    filename, byte_count, line_count, word_count = None, None, None, None
     flags_passed = any([args.count, args.lines, args.words, args.multibyte])
 
     data = None
@@ -68,7 +68,8 @@ def main():
         if args.multibyte:
             byte_count = count_characters(data)  # The -m option cancels a prior usage of -c
 
-    print(f"{line_count} {word_count} {byte_count} {filename}")
+    counts = [f"{count:8}" for count in [line_count, word_count, byte_count] if count != None]
+    print("".join(counts) + f" {filename or ''}")
 
 if __name__ == '__main__':
     main()
