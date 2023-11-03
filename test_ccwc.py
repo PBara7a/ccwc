@@ -1,6 +1,6 @@
 import unittest
 import subprocess
-from ccwc import count_bytes, main
+from ccwc import count_bytes, count_lines
 
 class TestSPC(unittest.TestCase):
     """Tests will be done against wc, the Linux tool"""
@@ -22,6 +22,22 @@ class TestSPC(unittest.TestCase):
         ccwc_byte_count = count_bytes(filename)
         expected_count = -1
         self.assertEqual(ccwc_byte_count, expected_count, "Byte count does not match expected")
+
+    def test_line_count(self):
+        filename = 'test.txt'
+        
+        ccwc_line_count = count_lines(filename)
+        
+        wc_output = subprocess.check_output(['wc', '-l', filename]).decode('utf-8')
+        wc_byte_count = int(wc_output.strip().split()[0])
+        
+        self.assertEqual(ccwc_line_count, wc_byte_count, "Line count does not match wc's output")
+
+    def test_line_count_missing_file(self):
+        filename = 'missing.txt'
+        ccwc_line_count = count_lines(filename)
+        expected_count = -1
+        self.assertEqual(ccwc_line_count, expected_count, "Line count does not match expected")
 
 if __name__ == '__main__':
     unittest.main()
